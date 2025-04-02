@@ -1,0 +1,5 @@
+tensorflow          # Treinar a IA
+keras               # Incluído no TensorFlow
+numpy               # Para operações numéricas
+matplotlib          # Para plotar gráficos de treino
+Pillow              # Para manipulação de imagens
