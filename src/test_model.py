@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 import os
 
 # Carregar o modelo treinado
-model = keras.models.load_model("QualiAI/apple_defect_model.h5")
+model = keras.models.load_model('QualiAI\src\\apple_defect_model.h5')
 
 # Caminho para a imagem de teste
-img_path = "QualiAi/test3.png"  # Atualize com o caminho correto
+img_path = "QualiAI\\test3.png"  # Atualize com o caminho correto
 
 # Carregar a imagem e redimensioná-la
 img = keras.utils.load_img(img_path, target_size=(256, 256))
