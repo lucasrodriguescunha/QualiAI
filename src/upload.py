@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from datetime import datetime
-
 from db import collection  
 
 from app import predict_image
@@ -19,17 +18,15 @@ def upload_image():
         return jsonify({'error': 'Nome do arquivo vazio'}), 400
 
     try:
-        image_bytes = file.read()
-        result = predict_image(image_bytes)
+        response = predict_image(file.read())
 
-        collection.insert_one({
-            'nome_arquivo': file.filename,
-            'resultado': result['resultado'],
-            'confianca': result['confianca'],
-            'data_analise': result['data_analise']
-        })
+        # collection.insert_one({
+        #     'resultado': response['resultado'],
+        #     'confianca': response['confianca'],
+        #     'data_analise': response.get('data_analise', datetime.now().isoformat())
+        # })
 
-        return jsonify({'relatorio': result})
+        return jsonify({'resultado': result})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
