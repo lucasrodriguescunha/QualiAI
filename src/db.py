@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 
-client = MongoClient("mongodb://localhost:27017")
-db = client["quali_ai"]
-colecao = db["resultados"]
+# Conexão com o MongoDB
+client = MongoClient("mongodb://localhost:27017/")
+db = client['quali_ai']
+collection = db['resultados']
