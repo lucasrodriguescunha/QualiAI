@@ -4,7 +4,7 @@ from datetime import datetime
 
 from db import collection  
 
-from predict import predict_image 
+from app import predict_image
 
 app = Flask(__name__)
 CORS(app)
@@ -29,7 +29,7 @@ def upload_image():
             'data_analise': result['data_analise']
         })
 
-        return jsonify({'resultado': result})
+        return jsonify({'relatorio': result})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
