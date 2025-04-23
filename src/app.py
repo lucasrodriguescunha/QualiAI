@@ -7,7 +7,7 @@ import io
 from db import collection
 
 # Carrega o modelo treinado
-model = keras.models.load_model('C:\\Users\\Lucas\\Documents\\QualiAI\\src\\apple_defect_model.h5')
+model = keras.models.load_model('QualiAI/src/apple_defect_model.h5')
 
 def predict_image(image_bytes):
     try:
@@ -19,13 +19,16 @@ def predict_image(image_bytes):
 
         prediction = model.predict(img_array)
         score = float(np.squeeze(prediction))
-        resultado = "Não defeituosa" if prediction[0] > 0.5 else "Defeituosa"
+        is_not_defective = score > 0.5
+
+        resultado = "Não defeituosa" if is_not_defective else "Defeituosa"
+        confianca = round(score * 100, 2) if is_not_defective else round((1 - score) * 100, 2)
         data_analise = datetime.now().strftime('%d/%m/%Y %H:%M')
 
         return {
             'resultado': resultado,
             'data_analise': data_analise,
-            'confianca': round(score * 100, 2)
+            'confianca': confianca
         }
     except Exception as e:
         raise RuntimeError(f"Erro ao processar a imagem: {str(e)}")
