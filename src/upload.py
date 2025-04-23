@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from datetime import datetime
 from db import collection  
-from app import predict_image 
+
+from app import predict_image
 
 app = Flask(__name__)
 CORS(app)
@@ -25,7 +26,7 @@ def upload_image():
         #     'data_analise': response.get('data_analise', datetime.now().isoformat())
         # })
 
-        return jsonify(response)
+        return jsonify({'resultado': result})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
