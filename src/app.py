@@ -3,11 +3,12 @@ from tensorflow import keras
 from PIL import Image
 from datetime import datetime
 import io
+import os
 
 from db import collection
 
-# Carrega o modelo treinado
-model = keras.models.load_model('C:\\Users\\Lucas\\Documents\\QualiAI\\src\\apple_defect_model.h5')
+MODEL_PATH = os.path.join(os.path.dirname(__file__), 'model', 'apple_defect_model.h5')
+model = keras.models.load_model(MODEL_PATH)
 
 def predict_image(image_bytes):
     try:
