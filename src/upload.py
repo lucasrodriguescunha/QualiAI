@@ -15,8 +15,8 @@ def upload_image():
         return jsonify({'error': 'Nome do arquivo vazio'}), 400
 
     try:
-        result = predict_image(file.read())
-        return jsonify({'resultado': result})
+        response = predict_image(file.read())
+        return jsonify(response)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
