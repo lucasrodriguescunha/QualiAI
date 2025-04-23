@@ -7,7 +7,7 @@ import io
 from db import collection
 
 # Carrega o modelo treinado
-model = keras.models.load_model('QualiAI/src/apple_defect_model.h5')
+model = keras.models.load_model('C:\\Users\\Lucas\\Documents\\QualiAI\\src\\apple_defect_model.h5')
 
 def predict_image(image_bytes):
     try:
