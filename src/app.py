@@ -16,14 +16,14 @@ def predict_image(image_bytes):
         img_array /= 255.0
 
         prediction = model.predict(img_array)
-        score = float(np.squeeze(prediction))  # Confiança entre 0 e 1
+        confidence = float(prediction[0][0])
         resultado = "Não defeituosa" if prediction[0] > 0.5 else "Defeituosa"
         data_analise = datetime.now().strftime('%d/%m/%Y %H:%M')
 
         return {
             'resultado': resultado,
+            'confianca': round(confidence * 100, 2),
             'data_analise': data_analise,
-            'confianca': round(score * 100, 2)  # Confiança em %
         }
     except Exception as e:
         raise RuntimeError(f"Erro ao processar a imagem: {str(e)}")
