@@ -4,8 +4,8 @@ from PIL import Image
 from datetime import datetime
 import io
 
-# Carrega o modelo
-model = keras.models.load_model('QualiAI/src/apple_defect_model.h5')
+# Carrega o modelo treinado
+model = keras.models.load_model('C:\\Users\\Lucas\\Documents\\QualiAI\\src\\apple_defect_model.h5')
 
 def predict_image(image_bytes):
     try:
@@ -16,14 +16,14 @@ def predict_image(image_bytes):
         img_array /= 255.0
 
         prediction = model.predict(img_array)
-        confidence = float(prediction[0][0])
+        score = float(np.squeeze(prediction))
         resultado = "Não defeituosa" if prediction[0] > 0.5 else "Defeituosa"
         data_analise = datetime.now().strftime('%d/%m/%Y %H:%M')
 
         return {
             'resultado': resultado,
-            'confianca': round(confidence * 100, 2),
             'data_analise': data_analise,
+            'confianca': round(score * 100, 2)
         }
     except Exception as e:
         raise RuntimeError(f"Erro ao processar a imagem: {str(e)}")
