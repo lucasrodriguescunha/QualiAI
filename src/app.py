@@ -4,6 +4,8 @@ from PIL import Image
 from datetime import datetime
 import io
 
+from db import collection
+
 # Carrega o modelo treinado
 model = keras.models.load_model('C:\\Users\\Lucas\\Documents\\QualiAI\\src\\apple_defect_model.h5')
 

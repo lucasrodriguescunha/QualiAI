@@ -1,17 +1,14 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from pymongo import MongoClient
 from datetime import datetime
+
+from db import collection  
+
+from predict import predict_image 
 
 app = Flask(__name__)
 CORS(app)
 
-# Conexão com MongoDB
-client = MongoClient("mongodb://localhost:27017/")
-db = client['quali_ai']
-collection = db['resultados']
-
-# Rota de upload
 @app.route('/api/upload', methods=['POST'])
 def upload_image():
     if 'file' not in request.files:
@@ -25,7 +22,6 @@ def upload_image():
         image_bytes = file.read()
         result = predict_image(image_bytes)
 
-        # Salvar no MongoDB
         collection.insert_one({
             'nome_arquivo': file.filename,
             'resultado': result['resultado'],
@@ -37,7 +33,6 @@ def upload_image():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Rota para listar os resultados
 @app.route('/api/listar', methods=['GET'])
 def listar_resultados():
     resultados = list(collection.find({}, {'_id': 0}))
