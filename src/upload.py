@@ -9,7 +9,8 @@ from app import predict_image
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/api/upload', methods=['POST'])
+# Upload de imagem
+@app.route('/api/image', methods=['POST'])
 def upload_image():
     if 'file' not in request.files or 'grupo_id' not in request.form:
         return jsonify({'error': 'Arquivo ou grupo_id ausente'}), 400
@@ -38,32 +39,26 @@ def upload_image():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/listar', methods=['GET'])
-def listar_analises():
-    registros = list(collection.find({}, {'_id': 0}))
-    agrupados = {}
-
-    for r in registros:
-        grupo_id = r.get('grupo_id', 'sem_grupo')
-        if grupo_id not in agrupados:
-            agrupados[grupo_id] = []
-        agrupados[grupo_id].append(r)
-
-    return jsonify(agrupados)
-
-@app.route('/api/filtrar/defeituosa', methods=['GET'])
-def filtrar_defeituosa():
+# Listagem e filtro de imagens
+@app.route('/api/image', methods=['GET'])
+def listar_ou_filtrar_imagens():
     try:
-        registros = list(collection.find({'resultado': 'Defeituosa'}, {'_id': 0}))
-        return jsonify(registros)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        filtro = request.args.get('resultado')  # Pega query param /api/image?resultado=Defeituosa
+        query = {}
 
-@app.route('/api/filtrar/nao_defeituosa', methods=['GET'])
-def filtrar_nao_defeituosa():
-    try:
-        registros = list(collection.find({'resultado': 'Não defeituosa'}, {'_id': 0}))
-        return jsonify(registros)
+        if filtro:
+            query['resultado'] = filtro
+
+        registros = list(collection.find(query, {'_id': 0}))
+        agrupados = {}
+
+        for r in registros:
+            grupo_id = r.get('grupo_id', 'sem_grupo')
+            if grupo_id not in agrupados:
+                agrupados[grupo_id] = []
+            agrupados[grupo_id].append(r)
+
+        return jsonify(agrupados)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
