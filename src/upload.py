@@ -40,7 +40,7 @@ def upload_image():
         return jsonify({'error': str(e)}), 500
 
 # Listagem e filtro de imagens
-@app.route('/api/image', methods=['GET'])
+@app.route('/api/images', methods=['GET'])
 def listar_ou_filtrar_imagens():
     try:
         filtro = request.args.get('resultado')  # Pega query param /api/image?resultado=Defeituosa
