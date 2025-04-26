@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Upload de imagem
-@app.route('/api/image', methods=['POST'])
+@app.route('/api/images', methods=['POST'])
 def upload_image():
     if 'file' not in request.files or 'grupo_id' not in request.form:
         return jsonify({'error': 'Arquivo ou grupo_id ausente'}), 400
