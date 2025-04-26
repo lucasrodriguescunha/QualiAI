@@ -39,7 +39,7 @@ def upload_image():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/listar', methods=['GET'])
-def listar_resultados():
+def listar_analises():
     registros = list(collection.find({}, {'_id': 0}))
     agrupados = {}
 
@@ -50,6 +50,22 @@ def listar_resultados():
         agrupados[grupo_id].append(r)
 
     return jsonify(agrupados)
+
+@app.route('/api/filtrar/defeituosa', methods=['GET'])
+def filtrar_defeituosa():
+    try:
+        registros = list(collection.find({'resultado': 'Defeituosa'}, {'_id': 0}))
+        return jsonify(registros)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/filtrar/nao_defeituosa', methods=['GET'])
+def filtrar_nao_defeituosa():
+    try:
+        registros = list(collection.find({'resultado': 'Não defeituosa'}, {'_id': 0}))
+        return jsonify(registros)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
