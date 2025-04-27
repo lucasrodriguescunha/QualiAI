@@ -1,16 +1,10 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-from datetime import datetime
-import uuid
+from flask import Blueprint, request, jsonify
+from app.services.predict_service import predict_image
+from app.db.mongo_connection import collection
 
-from db import collection  
-from app import predict_image
+bp = Blueprint('routes', __name__)
 
-app = Flask(__name__)
-CORS(app)
-
-# Upload de imagem
-@app.route('/api/images', methods=['POST'])
+@bp.route('/api/images', methods=['POST'])
 def upload_image():
     if 'file' not in request.files or 'grupo_id' not in request.form:
         return jsonify({'error': 'Arquivo ou grupo_id ausente'}), 400
@@ -39,11 +33,10 @@ def upload_image():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Listagem e filtro de imagens
-@app.route('/api/images', methods=['GET'])
+@bp.route('/api/images', methods=['GET'])
 def listar_ou_filtrar_imagens():
     try:
-        filtro = request.args.get('resultado')  # Pega query param /api/image?resultado=Defeituosa
+        filtro = request.args.get('resultado')
         query = {}
 
         if filtro:
@@ -61,6 +54,3 @@ def listar_ou_filtrar_imagens():
         return jsonify(agrupados)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(debug=True)
