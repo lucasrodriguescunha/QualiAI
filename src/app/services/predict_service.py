@@ -5,12 +5,18 @@ from datetime import datetime
 import io
 import os
 
-# Carrega o modelo uma única vez
-MODEL_PATH = os.path.abspath(os.path.join(__file__, '..', '..', '..', 'model', 'apple_defect_model.h5'))
-model = keras.models.load_model(MODEL_PATH)
-
-def predict_image(image_bytes):
+def predict_image(image_bytes, tipo_fruta):
     try:
+        # Decide o modelo baseado na fruta selecionada
+        if tipo_fruta == "Maçãs":
+            model_path = os.path.abspath(os.path.join(__file__, '..', '..', '..', 'model', 'modelo_maca.h5'))
+        elif tipo_fruta == "Mangas":
+            model_path = os.path.abspath(os.path.join(__file__, '..', '..', '..', 'model', 'modelo_manga.h5'))
+        else:
+            raise ValueError("Fruta inválida ou modelo não encontrado.")
+
+        model = keras.models.load_model(model_path)
+
         img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
         img = img.resize((256, 256))
         img_array = keras.utils.img_to_array(img)

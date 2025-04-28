@@ -74,6 +74,6 @@ plt.legend()
 plt.show()
 
 # Salvar o modelo treinado
-model.save("apple_defect_model.h5")
+model.save("modelo_manga.h5")
 
 print("Modelo treinado e salvo com sucesso!")
