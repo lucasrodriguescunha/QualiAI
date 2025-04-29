@@ -49,13 +49,13 @@ def get_images():
 
         query = {}
 
-        if filtro_resultado:
+        if filtro_resultado and filtro_resultado != 'todas':
             if filtro_resultado in ['defeituosa', 'nao_defeituosa']:
                 query['resultado'] = filtro_resultado
             else:
                 return jsonify({'error': 'Filtro de resultado inválido'}), 400
 
-        if filtro_data:
+        if filtro_data and filtro_data != 'todas':
             hoje = datetime.utcnow()
             if filtro_data == '30dias':
                 data_limite = hoje - timedelta(days=30)
