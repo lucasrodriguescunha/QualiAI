@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.services.predict_service import predict_image
 from app.db.mongo_connection import collection
-from app.utils import padronizar_resultado  # <- importamos a função
+from app.utils.utils import padronizar_resultado  # <- importamos a função
 from datetime import datetime, timedelta
 
 bp = Blueprint('routes', __name__)
