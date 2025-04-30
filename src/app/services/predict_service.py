@@ -29,7 +29,7 @@ def predict_image(image_bytes, tipo_fruta):
 
         resultado = "Não defeituosa" if is_not_defective else "Defeituosa"
         confianca = round(score * 100, 2) if is_not_defective else round((1 - score) * 100, 2)
-        data_analise = datetime.now().strftime('%d/%m/%Y %H:%M')
+        data_analise = datetime.utcnow()
 
         return {
             'resultado': resultado,

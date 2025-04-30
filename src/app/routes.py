@@ -30,7 +30,8 @@ def upload_image():
             'nome_arquivo': file.filename,
             'resultado': resultado_padronizado,
             'confianca': result['confianca'],
-            'data_analise': result['data_analise']
+            'data_analise': result['data_analise'],
+            'tipo_fruta': tipo_fruta  # Incluindo o tipo de fruta no registro
         }
 
         collection.insert_one(registro)
@@ -46,6 +47,7 @@ def get_images():
     try:
         filtro_resultado = request.args.get('resultado')
         filtro_data = request.args.get('data')
+        filtro_produto = request.args.get('tipo_fruta')  # Pegando o filtro de tipo_fruta
 
         query = {}
 
@@ -65,6 +67,9 @@ def get_images():
                 return jsonify({'error': 'Filtro de data inválido'}), 400
 
             query['data_analise'] = {'$gte': data_limite.isoformat()}
+
+        if filtro_produto and filtro_produto != 'todas':
+            query['tipo_fruta'] = filtro_produto  # Adicionando filtro para tipo_fruta
 
         registros = list(collection.find(query, {'_id': 0}))
         agrupados = {}
