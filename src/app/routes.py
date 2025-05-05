@@ -1,12 +1,11 @@
 from flask import Blueprint, request, jsonify
 from app.services.predict_service import predict_image
 from app.db.mongo_connection import collection
-from app.utils.utils import padronizar_resultado  # <- importamos a função
+from app.utils.utils import padronizar_resultado, padronizar_nome_arquivo
 from datetime import datetime, timedelta
 
 bp = Blueprint('routes', __name__)
 
-# Upload da imagem
 @bp.route('/api/images', methods=['POST'])
 def upload_image():
     try:
@@ -15,11 +14,12 @@ def upload_image():
 
         file = request.files['file']
         grupo_id = request.form['grupo_id']
-        tipo_fruta = request.form['tipo_fruta']
+        tipo_fruta = padronizar_resultado(request.form['tipo_fruta']) 
 
         if file.filename == '':
             return jsonify({'error': 'Nome do arquivo vazio'}), 400
 
+        nome_padronizado = padronizar_nome_arquivo(file.filename)
         image_bytes = file.read()
         result = predict_image(image_bytes, tipo_fruta)
 
@@ -27,11 +27,11 @@ def upload_image():
 
         registro = {
             'grupo_id': grupo_id,
-            'nome_arquivo': file.filename,
+            'nome_arquivo': nome_padronizado,
             'resultado': resultado_padronizado,
             'confianca': result['confianca'],
             'data_analise': result['data_analise'],
-            'tipo_fruta': tipo_fruta  # Incluindo o tipo de fruta no registro
+            'tipo_fruta': tipo_fruta
         }
 
         collection.insert_one(registro)
@@ -41,19 +41,19 @@ def upload_image():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Consulta de imagens (com filtros)
 @bp.route('/api/images', methods=['GET'])
 def get_images():
     try:
         filtro_resultado = request.args.get('resultado')
         filtro_data = request.args.get('data')
-        filtro_produto = request.args.get('tipo_fruta')  # Pegando o filtro de tipo_fruta
+        filtro_produto = request.args.get('tipo_fruta')
 
         query = {}
 
         if filtro_resultado and filtro_resultado != 'todas':
-            if filtro_resultado in ['defeituosa', 'nao_defeituosa']:
-                query['resultado'] = filtro_resultado
+            resultado_padronizado = padronizar_resultado(filtro_resultado)
+            if resultado_padronizado in ['defeituosa', 'nao_defeituosa']:
+                query['resultado'] = resultado_padronizado
             else:
                 return jsonify({'error': 'Filtro de resultado inválido'}), 400
 
@@ -69,13 +69,14 @@ def get_images():
             query['data_analise'] = {'$gte': data_limite.isoformat()}
 
         if filtro_produto and filtro_produto != 'todas':
-            query['tipo_fruta'] = filtro_produto  # Adicionando filtro para tipo_fruta
+            query['tipo_fruta'] = padronizar_resultado(filtro_produto)
 
         registros = list(collection.find(query, {'_id': 0}))
         agrupados = {}
 
         for r in registros:
             grupo_id = r.get('grupo_id', 'sem_grupo')
+            r.pop('grupo_id', None) 
             agrupados.setdefault(grupo_id, []).append(r)
 
         return jsonify({'grupos': agrupados}), 200
