@@ -58,7 +58,7 @@ def get_images():
                 return jsonify({'error': 'Filtro de resultado inválido'}), 400
 
         if filtro_data and filtro_data != 'todas':
-            hoje = datetime.utcnow()
+            hoje = datetime.now()
             if filtro_data == '30dias':
                 data_limite = hoje - timedelta(days=30)
             elif filtro_data == '7dias':
@@ -66,7 +66,7 @@ def get_images():
             else:
                 return jsonify({'error': 'Filtro de data inválido'}), 400
 
-            query['data_analise'] = {'$gte': data_limite.isoformat()}
+            query['data_analise'] = {'$gte': data_limite}
 
         if filtro_produto and filtro_produto != 'todas':
             query['tipo_fruta'] = padronizar_resultado(filtro_produto)
