@@ -8,9 +8,9 @@ import os
 def predict_image(image_bytes, tipo_fruta):
     try:
         # Decide o modelo baseado na fruta selecionada
-        if tipo_fruta == "Maçãs":
+        if tipo_fruta == "macas":
             model_path = os.path.abspath(os.path.join(__file__, '..', '..', '..', 'model', 'modelo_maca.h5'))
-        elif tipo_fruta == "Mangas":
+        elif tipo_fruta == "mangas":
             model_path = os.path.abspath(os.path.join(__file__, '..', '..', '..', 'model', 'modelo_manga.h5'))
         else:
             raise ValueError("Fruta inválida ou modelo não encontrado.")
