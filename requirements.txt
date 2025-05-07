@@ -6,3 +6,4 @@ Pillow              # Para manipulação de imagens
 Flask
 Flask_CORS
 pymongo
+opencv-python
