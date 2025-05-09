@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 bp = Blueprint('routes', __name__)
 
 @bp.route('/api/images', methods=['POST'])
-def upload_image():
+def upload_image_by_file():
     try:
         if 'file' not in request.files or 'grupo_id' not in request.form or 'tipo_fruta' not in request.form:
             return jsonify({'error': 'Arquivo, grupo_id ou tipo_fruta ausente'}), 400
@@ -40,6 +40,11 @@ def upload_image():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@bp.route('/api/images/webcam', methods=['POST'])
+def upload_image_by_webcam():
+    try:
+        if
 
 @bp.route('/api/images', methods=['GET'])
 def get_images():
