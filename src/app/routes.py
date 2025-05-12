@@ -40,11 +40,6 @@ def upload_image_by_file():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
-@bp.route('/api/images/webcam', methods=['POST'])
-def upload_image_by_webcam():
-    try:
-        if
 
 @bp.route('/api/images', methods=['GET'])
 def get_images():
@@ -68,6 +63,8 @@ def get_images():
                 data_limite = hoje - timedelta(days=30)
             elif filtro_data == '7dias':
                 data_limite = hoje - timedelta(days=7)
+            elif filtro_data == '24horas':
+                data_limite = hoje - timedelta(hours=24)
             else:
                 return jsonify({'error': 'Filtro de data inválido'}), 400
 
