@@ -15,6 +15,7 @@ def upload_image_by_file():
         file = request.files['file']
         grupo_id = request.form['grupo_id']
         tipo_fruta = padronizar_resultado(request.form['tipo_fruta']) 
+        id_usuario = request.form.get('id_usuario')
 
         if file.filename == '':
             return jsonify({'error': 'Nome do arquivo vazio'}), 400
@@ -31,7 +32,8 @@ def upload_image_by_file():
             'resultado': resultado_padronizado,
             'confianca': result['confianca'],
             'data_analise': result['data_analise'],
-            'tipo_fruta': tipo_fruta
+            'tipo_fruta': tipo_fruta,
+            'id_usuario': id_usuario
         }
 
         collection.insert_one(registro)
