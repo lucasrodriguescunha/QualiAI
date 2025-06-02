@@ -7,3 +7,4 @@ Flask
 Flask_CORS
 pymongo
 opencv-python
+rembg
