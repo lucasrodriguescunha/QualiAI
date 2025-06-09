@@ -49,7 +49,8 @@ def predict_image(image_bytes, tipo_fruta):
         is_not_defective = score > 0.5
 
         resultado = "Não defeituosa" if is_not_defective else "Defeituosa"
-        confianca = round(score * 100, 2) if is_not_defective else round((1 - score) * 100, 2)
+        confianca_bruta = score * 100 if is_not_defective else (1 - score) * 100
+        confianca = round(max(confianca_bruta - 1, 0), 2)
         data_analise = datetime.now()
 
         return {
