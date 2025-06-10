@@ -5,6 +5,7 @@ from datetime import datetime
 import io
 import os
 from app.utils.background_removal import remove_background_and_center
+from app.utils.object_detection import detect_and_crop_fruit
 
 def save_preprocessed_image(image: Image.Image):
     """
@@ -14,8 +15,8 @@ def save_preprocessed_image(image: Image.Image):
     output_dir = os.path.abspath(os.path.join(__file__, '..', '..', '..', 'processed_images'))
     os.makedirs(output_dir, exist_ok=True)
 
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
-    filename = f"imagem_processada_{timestamp}.jpg"
+    timestamp = datetime.now().strftime('%Y%m%d%H%M%S%f')
+    filename = f"imagemprocessada{timestamp}.jpg"
     path_salvo = os.path.join(output_dir, filename)
 
     image.save(path_salvo, format='JPEG')
@@ -32,12 +33,20 @@ def predict_image(image_bytes, tipo_fruta):
 
         model = keras.models.load_model(model_path)
 
-        # Abrir imagem original e aplicar remoção de fundo + centralização
+        # Caminho para o modelo YOLOv8
+        yolo_model_path = os.path.abspath(os.path.join(__file__, '..', '..', '..', 'model', 'yolov8n.pt'))
+
+        # Abrir imagem original
         original_image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
-        preprocessed_img = remove_background_and_center(original_image)
+
+        # Detectar e recortar a fruta
+        cropped_image = detect_and_crop_fruit(original_image, tipo_fruta, yolo_model_path)
+
+        # Aplicar remoção de fundo + centralização na imagem recortada
+        preprocessed_img = remove_background_and_center(cropped_image)
 
         # Salvar imagem processada
-        save_preprocessed_image(preprocessed_img)
+        # save_preprocessed_image(preprocessed_img)
 
         # Preparar imagem para predição
         img_array = keras.utils.img_to_array(preprocessed_img)
@@ -49,8 +58,7 @@ def predict_image(image_bytes, tipo_fruta):
         is_not_defective = score > 0.5
 
         resultado = "Não defeituosa" if is_not_defective else "Defeituosa"
-        confianca_bruta = score * 100 if is_not_defective else (1 - score) * 100
-        confianca = round(max(confianca_bruta - 1, 0), 2)
+        confianca = round(score * 100, 2) if is_not_defective else round((1 - score) * 100, 2)
         data_analise = datetime.now()
 
         return {
