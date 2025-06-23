@@ -9,3 +9,4 @@ pymongo
 opencv-python
 rembg
 ultralytics
+onnxruntime
