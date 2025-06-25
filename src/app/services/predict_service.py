@@ -2,16 +2,13 @@ import numpy as np
 from tensorflow import keras
 from PIL import Image
 from datetime import datetime
+import pytz
 import io
 import os
 from app.utils.background_removal import remove_background_and_center
 from app.utils.object_detection import detect_and_crop_fruit
 
 def save_preprocessed_image(image: Image.Image):
-    """
-    Salva a imagem preprocessada em uma pasta local chamada 'processed_images'.
-    Retorna o caminho salvo.
-    """
     output_dir = os.path.abspath(os.path.join(__file__, '..', '..', '..', 'processed_images'))
     os.makedirs(output_dir, exist_ok=True)
 
@@ -33,22 +30,16 @@ def predict_image(image_bytes, tipo_fruta):
 
         model = keras.models.load_model(model_path)
 
-        # Caminho para o modelo YOLOv8
         yolo_model_path = os.path.abspath(os.path.join(__file__, '..', '..', '..', 'model', 'yolov8n.pt'))
 
-        # Abrir imagem original
         original_image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
 
-        # Detectar e recortar a fruta
         cropped_image = detect_and_crop_fruit(original_image, tipo_fruta, yolo_model_path)
 
-        # Aplicar remoção de fundo + centralização na imagem recortada
         preprocessed_img = remove_background_and_center(cropped_image)
 
-        # Salvar imagem processada
         # save_preprocessed_image(preprocessed_img)
 
-        # Preparar imagem para predição
         img_array = keras.utils.img_to_array(preprocessed_img)
         img_array = np.expand_dims(img_array, axis=0)
         img_array = img_array / 255.0
@@ -59,7 +50,9 @@ def predict_image(image_bytes, tipo_fruta):
 
         resultado = "Não defeituosa" if is_not_defective else "Defeituosa"
         confianca = round(score * 100, 2) if is_not_defective else round((1 - score) * 100, 2)
-        data_analise = datetime.now()
+
+        fuso_brasilia = pytz.timezone('America/Sao_Paulo')
+        data_analise = datetime.now(fuso_brasilia).isoformat()
 
         return {
             'resultado': resultado,
