@@ -46,7 +46,7 @@ def predict_image(image_bytes, tipo_fruta):
         img_array = img_array / 255.0
 
         prediction = model.predict(img_array)
-        score = float(np.squeeze(prediction))
+        score = float((np.squeeze(prediction)))
         is_not_defective = score > 0.5
 
         resultado = "Não defeituosa" if is_not_defective else "Defeituosa"
@@ -57,7 +57,7 @@ def predict_image(image_bytes, tipo_fruta):
         return {
             'resultado': resultado,
             'data_analise': data_analise,
-            'confianca': score
+            'confianca': round(score, 6)
         }
 
     except Exception as e:
