@@ -50,12 +50,6 @@ def predict_image(image_bytes, tipo_fruta):
         is_not_defective = score > 0.5
 
         resultado = "Não defeituosa" if is_not_defective else "Defeituosa"
-        raw_confidence = score if is_not_defective else (1 - score)
-
-        if raw_confidence >= 0.90:
-            confianca = round(random.uniform(90.00, 96.99), 2)
-        else:
-            confianca = round(raw_confidence * 100, 2)
 
         fuso_brasilia = pytz.timezone('America/Sao_Paulo')
         data_analise = datetime.now(fuso_brasilia).isoformat()
@@ -63,7 +57,7 @@ def predict_image(image_bytes, tipo_fruta):
         return {
             'resultado': resultado,
             'data_analise': data_analise,
-            'confianca': confianca
+            'confianca': score
         }
 
     except Exception as e:
